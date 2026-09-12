@@ -51,10 +51,15 @@ async def upload_document(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process document: {str(e)}")
 
-    result: AgentTurnResult = await AgentService.handle_user_turn(
-        session_id=session_id,
-        message=raw_text
-    )
+    try:
+        result: AgentTurnResult = await AgentService.handle_user_turn(
+            session_id=session_id,
+            message=raw_text
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Failed to extract complaint entities: {str(e)}")
 
     assistant_msg = (
         f"Successfully extracted {len(result.diffs)} attributes from {doc_format} '{file.filename}'. "

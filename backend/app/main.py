@@ -4,17 +4,21 @@ from app.config import settings
 from app.routers.chat import router as chat_router
 from app.routers.documents import router as documents_router
 
+app_title = "PharmaCopilot API"
+if settings.app_name and settings.app_name.strip():
+    app_title = settings.app_name.strip()
+
 app = FastAPI(
-    title=settings.app_name,
-    version=settings.app_version,
+    title=app_title,
+    version=settings.app_version or "0.1.0",
     description="Backend API for PharmaCopilot — AI-powered customer complaint management prototype.",
 )
 
-# CORS Middleware
+# CORS Middleware - allows Vercel deployments, custom domains, and local dev
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
